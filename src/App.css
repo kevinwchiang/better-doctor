@@ -1,0 +1,42 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 20vh;
+}
+
+.App-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+  padding: 20px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+  width: 30vw;
+  height: 30px;
+}
+
+.list-container {
+  width: 90%;
+  margin: auto;
+}
+
+.list-item {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 33%);
+  text-align: left;
+  margin-bottom: 5vh;
+}
+
+
+
