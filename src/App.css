@@ -19,7 +19,7 @@
   font-size: large;
 }
 
-.search-bar {
+#search-bar {
   margin-bottom: 20px;
   width: 30vw;
   height: 30px;

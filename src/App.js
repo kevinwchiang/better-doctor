@@ -96,7 +96,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </div>
         <input
-          className="search-bar"
+          id="search-bar"
           value={this.state.search}
           onChange={(event) => this.onSearchChange(event)}
           placeholder={'Search for a Doctor...'}

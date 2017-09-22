@@ -7,8 +7,11 @@ const bodyParser = require('body-parser');
 const api_key = '1394e1477528a6ebc925b49485c3d663';
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
 app.use(cors());
+
+app.get('/', (req, res) => {
+    res.status(200).send('Success');
+});
 
 app.post('/search', function (req, res) {
   const skip = req.body.skip || 0;
@@ -21,6 +24,8 @@ app.post('/search', function (req, res) {
   })
 });
 
-app.listen(1337, function () {
-  console.log('App listening on port 1337!')
+app.listen(4000, function () {
+  console.log('App listening on port 4000!')
 });
+
+module.exports = app;
