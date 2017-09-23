@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { shallow } from 'enzyme';
 import App from './App';
-import { shallow, mount } from 'enzyme';
 
-describe('<MyApp />', () => {
-
+describe('<App />', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     ReactDOM.render(<App />, div);
@@ -15,10 +14,10 @@ describe('<MyApp />', () => {
     expect(wrapper.find('#search-bar').length).toBe(1);
   });
 
-  it("should render a list", function() {
-    const renderListSpy = jest.spyOn(App.prototype, "renderList");
-    const wrap = shallow(<App />);
+  it('should render a list', () => {
+    const renderListSpy = jest.spyOn(App.prototype, 'renderList');
+    const div = document.createElement('div');
+    ReactDOM.render(<App />, div);
     expect(renderListSpy).toHaveBeenCalled();
   });
-  
 });

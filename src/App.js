@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.png';
-import './App.css';
 import 'whatwg-fetch';
 import { throttle } from 'lodash';
+import logo from './logo.png';
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class App extends Component {
     this.state = {
       skip: 0,
       doctors: [],
-      search: ''
+      search: '',
     };
     this.fetchDoctors = throttle(this.fetchDoctors.bind(this), 1000);
     this.renderList = this.renderList.bind(this);
@@ -19,39 +19,11 @@ class App extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener('scroll', this.handleScroll);
   }
 
   componentWillUnmount() {
-    window.removeEventListener("scroll", this.handleScroll);
-  }
-
-  fetchDoctors(newSearch) {
-    const { skip, doctors, search } = this.state;
-    console.log('search', newSearch)
-    if (newSearch === '') {
-      this.setState({ doctors: [] });
-      return;
-    }
-    const body = { 
-      skip: newSearch ? 0 : skip,
-      name: newSearch ? newSearch : search
-    };
-    fetch('http://localhost:1337/search', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    })
-    .then((response) => {
-      return response.json();
-    })
-    .then((body) => {
-      let parsedBody = JSON.parse(body);
-      console.log('result', parsedBody.data)
-      this.setState({ skip: skip + 10, doctors: newSearch ? parsedBody.data : doctors.concat(parsedBody.data) });
-    })
+    window.removeEventListener('scroll', this.handleScroll);
   }
 
   onSearchChange(event) {
@@ -60,33 +32,66 @@ class App extends Component {
     this.fetchDoctors(value);
   }
 
+  fetchDoctors(newSearch) {
+    const { skip, doctors, search } = this.state;
+    if (newSearch === '') {
+      this.setState({ doctors: [] });
+      return;
+    }
+    const searchBody = {
+      skip: newSearch ? 0 : skip,
+      name: !newSearch ? search : newSearch,
+    };
+    fetch('http://localhost:1337/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchBody),
+    })
+      .then(response => response.json())
+      .then((body) => {
+        const parsedBody = JSON.parse(body);
+        this.setState({
+          skip: skip + 10,
+          doctors: newSearch ? parsedBody.data : doctors.concat(parsedBody.data),
+        });
+      });
+  }
+
+  handleScroll() {
+    const windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.offsetHeight;
+    const body = document.body;
+    const html = document.documentElement;
+    const docHeight = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight,
+    );
+    const windowBottom = windowHeight + window.pageYOffset;
+    if (windowBottom >= docHeight) {
+      this.fetchDoctors();
+    }
+  }
+
   renderList() {
     const { doctors } = this.state;
     return (
       <div className="list-container">
-        {doctors && doctors.map((doctor, i) => {
+        {doctors && doctors.map((doctor) => {
           const { profile } = doctor;
           return (
-            <div className="list-item" key={i}>
-              <a className="profile-name">Name: {profile['first_name']}  {profile['last_name']}</a>
-              <a className="profile-title">Title: {profile['title']}</a>
-              <a className="profile-last">Bio: {profile['bio']}</a>
+            <div className="list-item" key={doctor.uid}>
+              <a className="profile-name">Name: {profile.first_name}  {profile.last_name}</a>
+              <a className="profile-title">Title: {profile.title}</a>
+              <a className="profile-last">Bio: {profile.bio}</a>
             </div>
           );
         })}
       </div>
     );
-  }
-
-  handleScroll() {
-    const windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
-    const body = document.body;
-    const html = document.documentElement;
-    const docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,  html.scrollHeight, html.offsetHeight);
-    const windowBottom = windowHeight + window.pageYOffset;
-    if (windowBottom >= docHeight) {
-      this.fetchDoctors();
-    }
   }
 
   render() {
@@ -98,7 +103,7 @@ class App extends Component {
         <input
           id="search-bar"
           value={this.state.search}
-          onChange={(event) => this.onSearchChange(event)}
+          onChange={event => this.onSearchChange(event)}
           placeholder={'Search for a Doctor...'}
         />
         {this.renderList()}
